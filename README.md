@@ -1,3 +1,3 @@
 # snippets
-Small things that don't really brlong in a formal repo
+Small things that don't really belong in a formal repo
 Tests / Examples / Similar
