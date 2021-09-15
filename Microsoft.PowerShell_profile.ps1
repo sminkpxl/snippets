@@ -74,9 +74,13 @@ function runbash { bash -c $args }
 function fortune { bash -c fortune }
 function vcal { bash -c "/home/smink/.bin/vcal.sh $args" }
 # TODO: something is up when these 3 are on the right side of a pipe as opposed to either the beginning or without a pipe
-function v { gvim.exe $args }
-function vi { gvim.exe $args }
-function gvim { gvim.exe $args }
+#function v { gvim.exe $args }
+#function vi { gvim.exe $args }
+#function gvim { gvim.exe $args }
+Set-Alias -Name v -Value gvim.exe
+Set-Alias -Name vi -Value gvim.exe
+Set-Alias -Name gvim -Value gvim.exe
+function gvimdiff { gvim.exe -d $args } 
 function .. { cd .. }
 function ls { bash -c "ls $args" }
 function version { echo $myprofversion; get-wmiobject -class win32_operatingsystem | select caption } 
