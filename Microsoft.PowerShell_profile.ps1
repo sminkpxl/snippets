@@ -32,6 +32,9 @@ remove-item -path alias:pwd
 # create some vars
 $myprofversion = '1.5'
 
+# update system vars
+$MaximumHistoryCount = 1000
+
 # Get rid of the ps7 promotion - open powershell with -nologo for cleanest experience
 Clear-Host
 Write-Host "Windows PowerShell"
@@ -43,6 +46,8 @@ function gd { git diff $args }
 function gsm { git ls-files -m . }
 function gcp { git cherry-pick $args }
 function gs { git status $args }
+function gsi { echo 'git submodule init'; git submodule init }
+function gsur { echo 'git submodule update --recursive'; git submodule update --recursive }
 function dirty { git describe --tag --long --dirty }
 
 # Compute file hashes - useful for checking successful downloads 
@@ -90,6 +95,28 @@ function fh { bash -c "find * -type f | xargs grep -HI $args" }
 function fhi { bash -c "find * -type f | xargs grep -HIi $args" }
 function fhl { bash -c "find * -type f | xargs grep -HIl $args" }
 function fhil { bash -c "find * -type f | xargs grep -HIil $args" }
+function findf
+{
+    if ($args.Count -gt 0)
+    {
+        bash -c "find * -type f | grep $args"
+    }
+    else
+    {
+        bash -c "find * -type f"
+    }
+}
+function findd
+{
+    if ($args.Count -gt 0)
+    {
+        bash -c "find * -type d | grep $args"
+    }
+    else
+    {
+        bash -c "find * -type d"
+    }
+}
 function dfhl { Get-WMIObject Win32_LogicalDisk -filter "DriveType=3" | ft }
 function pwd { (Get-Location | select-string -notmatch '----') -replace "`n",'' }
 function info { get-childitem Env: | ft }  # TODO: filter things out of this
@@ -99,26 +126,26 @@ function touch
 {
     # TODO: what about more than one? currently only supporting a single argument
     If (Test-Path -Path $args[0]) 
-	{
-		set-itemproperty -Path $args[0] -Name LastWriteTime -Value $(get-date)
-	}
-	Else
-	{
-	    set-content -Path $args[0] -Value $null
-	}
+    {
+        set-itemproperty -Path $args[0] -Name LastWriteTime -Value $(get-date)
+    }
+    Else
+    {
+        set-content -Path $args[0] -Value $null
+    }
 }
 function lsusb { gwmi Win32_USBControllerDevice }
 function psm 
 {
     if ($args.Count -lt 1)
-	{
-	    get-process | select id, ProcessName
-	}
-	else
-	{
-		# TODO: this does not work
-	    get-process | select id, ProcessName | where {$_.processname -like $args[0]}
-	}
+    {
+        get-process | select id, ProcessName
+    }
+    else
+    {
+        # TODO: this does not work
+        get-process | select id, ProcessName | where {$_.processname -like $args[0]}
+    }
 }
 function mank { get-help $args[0] | select name, category, synopsis | ft -a }
 function file { bash -c "file ${args}" }
