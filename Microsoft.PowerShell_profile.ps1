@@ -30,7 +30,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.5'
+$myprofversion = '1.6'
 
 # update system vars
 $MaximumHistoryCount = 1000
@@ -46,6 +46,7 @@ function gd { git diff $args }
 function gsm { git ls-files -m . }
 function gcp { git cherry-pick $args }
 function gs { git status $args }
+function glf { git log --name-status --oneline $args }
 function gsi { echo 'git submodule init'; git submodule init }
 function gsur { echo 'git submodule update --recursive'; git submodule update --recursive }
 function dirty { git describe --tag --long --dirty }
@@ -88,6 +89,7 @@ Set-Alias -Name gvim -Value gvim.exe
 function gvimdiff { gvim.exe -d $args } 
 function .. { cd .. }
 function ls { bash -c "ls $args" }
+function wc { bash -c "wc $args" }
 function version { echo $myprofversion; get-wmiobject -class win32_operatingsystem | select caption } 
 function psversion { echo(Get-Host).Version } 
 function calc { bash -c "echo $args" }
@@ -106,6 +108,7 @@ function findf
         bash -c "find * -type f"
     }
 }
+Set-Alias -Name ff -Value findf
 function findd
 {
     if ($args.Count -gt 0)
@@ -117,6 +120,7 @@ function findd
         bash -c "find * -type d"
     }
 }
+Set-Alias -Name fd -Value findd
 function dfhl { Get-WMIObject Win32_LogicalDisk -filter "DriveType=3" | ft }
 function pwd { (Get-Location | select-string -notmatch '----') -replace "`n",'' }
 function info { get-childitem Env: | ft }  # TODO: filter things out of this
