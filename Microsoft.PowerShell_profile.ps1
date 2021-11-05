@@ -30,7 +30,8 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.6'
+$myprofversion = '1.7'
+$myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
 $MaximumHistoryCount = 1000
@@ -88,7 +89,7 @@ Set-Alias -Name vi -Value gvim.exe
 Set-Alias -Name gvim -Value gvim.exe
 function gvimdiff { gvim.exe -d $args } 
 function .. { cd .. }
-function ls { bash -c "ls $args" }
+function ls { $a = $args -replace '\\','/'; bash -c "ls $a" } #function ls { bash -c "ls $args" }
 function wc { bash -c "wc $args" }
 function version { echo $myprofversion; get-wmiobject -class win32_operatingsystem | select caption } 
 function psversion { echo(Get-Host).Version } 
@@ -170,19 +171,66 @@ function grep { select-string -Path $args[1] -Pattern $args[0] -AllMatches | sel
 function grepv { select-string -notmatch -Path $args[1] -Pattern $args[0] -AllMatches | select-object -ExpandProperty Line }
 
 # location based things
-function me { Set-Location c:\_me }
-function home { Set-Location $home }
-function documents { Set-Location $home/Documents }
-function desktop { Set-Location $home/Desktop }
-function downloads { Set-Location $home/Downloads }
-function music { Set-Location $home/Music }
-function videos { Set-Location $home/Videos }
-function workspace { Set-Location c:\_me\workspace }
-function 3p { Set-Location c:\_me\3p }
-function pot { Set-Location c:\_me\pot-swdev }
+function xd
+{
+# this is a work in progress - want it to support 'cd -'
+	$localdir = $(get-location) | select-object -ExpandProperty Path
+	echo $localdir
+    if ($args.Count -lt 1)
+    {
+        Set-Location $home
+    }
+    elseif ($args[0] -eq '-')
+    {
+        Set-Location "$myCurrentDirectory"
+    }
+	else
+	{
+        Set-Location $args[0]
+	}
+	$myCurrentDirectory = $localdir
+}
+function me { Set-Location c:\_me; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function home { Set-Location $home; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function documents { Set-Location $home/Documents; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function desktop { Set-Location $home/Desktop; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function downloads { Set-Location $home/Downloads; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function music { Set-Location $home/Music; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function videos { Set-Location $home/Videos; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function workspace { Set-Location c:\_me\workspace; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function 3p { Set-Location c:\_me\3p; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
+function pot { Set-Location c:\_me\pot-swdev; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
 
 Set-Alias -Name np -Value C:\Windows\notepad.exe
 Set-Alias -Name npp -Value "C:\Program Files\Notepad++\notepad++.exe"
+
+function path([string] $operation, [string] $dir)
+{
+    # check if empty
+	if ($operation)
+	{
+		if ($operation -eq '+')
+		{
+			$env:Path += "; $dir"
+		}
+		elseif ($operation -eq '-')
+		{
+			$env:Path = "$dir; " + $env:Path
+		}
+		else
+		{
+			echo "usage: path [+/- dir]"
+		}
+	}
+	else
+	{
+		echo $env:Path
+	}
+}
+
+function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -noExit "Get-Location | select-object -Expandproperty Path" }
+
+# function needs: single required argument to construct a command like the following: tasklist.exe /m /fi "imagename eq vfsze.exe"
 
 # if you get an execution error, run this from an admin powershell:
 #     Set-ExecutionPolicy -ExecutionPolicy Unrestricted
