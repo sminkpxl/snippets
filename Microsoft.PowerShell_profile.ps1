@@ -1,3 +1,9 @@
+#
+# Note: prereqs: 
+#       1. some kind of linux installed (debian, ubuntu, etc.)
+#       2. fortune installed in that linux
+#       3. script vcal.sh from <location>
+#
 # some came from here: https://stackoverflow.com/questions/4166370/how-can-i-write-a-powershell-alias-with-arguments-in-the-middle
 # some came from here: https://devops-collective-inc.gitbook.io/a-unix-person-s-guide-to-powershell/commands-detail-u
 # prompt came from here: https://blogs.msmvps.com/richardsiddaway/2013/07/21/fun-with-prompts/
@@ -38,8 +44,9 @@ $MaximumHistoryCount = 1000
 
 # Get rid of the ps7 promotion - open powershell with -nologo for cleanest experience
 Clear-Host
-Write-Host "Windows PowerShell"
-Write-Host
+#Write-Host "Windows PowerShell" # this is stupid - pick something cooler
+bash -c "fortune"
+#Write-Host
 
 # git related
 function gs { git status $args }
@@ -174,8 +181,8 @@ function grepv { select-string -notmatch -Path $args[1] -Pattern $args[0] -AllMa
 function xd
 {
 # this is a work in progress - want it to support 'cd -'
-	$localdir = $(get-location) | select-object -ExpandProperty Path
-	echo $localdir
+    $localdir = $(get-location) | select-object -ExpandProperty Path
+    echo $localdir
     if ($args.Count -lt 1)
     {
         Set-Location $home
@@ -184,11 +191,11 @@ function xd
     {
         Set-Location "$myCurrentDirectory"
     }
-	else
-	{
+    else
+    {
         Set-Location $args[0]
-	}
-	$myCurrentDirectory = $localdir
+    }
+    $myCurrentDirectory = $localdir
 }
 function me { Set-Location c:\_me; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
 function home { Set-Location $home; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
@@ -201,36 +208,42 @@ function workspace { Set-Location c:\_me\workspace; $myCurrentDirectory = $(get-
 function 3p { Set-Location c:\_me\3p; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
 function pot { Set-Location c:\_me\pot-swdev; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
 
+# let windows/powershell figure out where things are
 Set-Alias -Name np -Value C:\Windows\notepad.exe
 Set-Alias -Name npp -Value "C:\Program Files\Notepad++\notepad++.exe"
+Set-Alias -Name make -Value C:\Qt\Qt5.12.11\Tools\mingw730_32\bin\mingw32-make.exe
+Set-Alias -Name qmake -Value C:\Qt\Qt5.12.11\5.12.11\mingw73_32\bin\qmake.exe
+
 
 function path([string] $operation, [string] $dir)
 {
     # check if empty
-	if ($operation)
-	{
-		if ($operation -eq '+')
-		{
-			$env:Path += "; $dir"
-		}
-		elseif ($operation -eq '-')
-		{
-			$env:Path = "$dir; " + $env:Path
-		}
-		else
-		{
-			echo "usage: path [+/- dir]"
-		}
-	}
-	else
-	{
-		echo $env:Path
-	}
+    if ($operation)
+    {
+        if ($operation -eq '+')
+        {
+            $env:Path += "; $dir"
+        }
+        elseif ($operation -eq '-')
+        {
+            $env:Path = "$dir; " + $env:Path
+        }
+        else
+        {
+            echo "usage: path [+/- dir]"
+        }
+    }
+    else
+    {
+        echo $env:Path
+    }
 }
 
 function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -noExit "Get-Location | select-object -Expandproperty Path" }
+function fortune { bash -c "fortune" }
 
 # function needs: single required argument to construct a command like the following: tasklist.exe /m /fi "imagename eq vfsze.exe"
+# above could also be aliased to depends
 
 # if you get an execution error, run this from an admin powershell:
 #     Set-ExecutionPolicy -ExecutionPolicy Unrestricted
