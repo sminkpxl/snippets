@@ -36,7 +36,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.7'
+$myprofversion = '1.8'
 $myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
@@ -87,6 +87,7 @@ function runcmd { cmd /c $args }
 function runbash { bash -c $args }
 function fortune { bash -c fortune }
 function vcal { bash -c "/home/smink/.bin/vcal.sh $args" }
+Set-Alias -Name vc -Value vcal
 # TODO: something is up when these 3 are on the right side of a pipe as opposed to either the beginning or without a pipe
 #function v { gvim.exe $args }
 #function vi { gvim.exe $args }
@@ -117,6 +118,18 @@ function findf
     }
 }
 Set-Alias -Name ff -Value findf
+function findfi
+{
+    if ($args.Count -gt 0)
+    {
+        bash -c "find * -type f | grep -i $args"
+    }
+    else
+    {
+        bash -c "find * -type f"
+    }
+}
+Set-Alias -Name ffi -Value findfi
 function findd
 {
     if ($args.Count -gt 0)
@@ -129,6 +142,18 @@ function findd
     }
 }
 Set-Alias -Name fd -Value findd
+function finddi
+{
+    if ($args.Count -gt 0)
+    {
+        bash -c "find * -type d | grep -i $args"
+    }
+    else
+    {
+        bash -c "find * -type d"
+    }
+}
+Set-Alias -Name fdi -Value finddi
 function dfhl { Get-WMIObject Win32_LogicalDisk -filter "DriveType=3" | ft }
 function pwd { (Get-Location | select-string -notmatch '----') -replace "`n",'' }
 function info { get-childitem Env: | ft }  # TODO: filter things out of this
