@@ -36,7 +36,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.8'
+$myprofversion = '1.9'
 $myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
@@ -92,9 +92,6 @@ Set-Alias -Name vc -Value vcal
 #function v { gvim.exe $args }
 #function vi { gvim.exe $args }
 #function gvim { gvim.exe $args }
-Set-Alias -Name v -Value gvim.exe
-Set-Alias -Name vi -Value gvim.exe
-Set-Alias -Name gvim -Value gvim.exe
 function gvimdiff { gvim.exe -d $args } 
 function .. { cd .. }
 function ls { $a = $args -replace '\\','/'; bash -c "ls $a" } #function ls { bash -c "ls $args" }
@@ -234,11 +231,28 @@ function 3p { Set-Location c:\_me\3p; $myCurrentDirectory = $(get-location) | se
 function pot { Set-Location c:\_me\pot-swdev; $myCurrentDirectory = $(get-location) | select-object -ExpandProperty Path }
 
 # let windows/powershell figure out where things are
+Set-Alias -Name v -Value gvim.exe
+Set-Alias -Name vi -Value gvim.exe
+Set-Alias -Name gvim -Value gvim.exe
 Set-Alias -Name np -Value C:\Windows\notepad.exe
 Set-Alias -Name npp -Value "C:\Program Files\Notepad++\notepad++.exe"
 Set-Alias -Name make -Value C:\Qt\Qt5.12.11\Tools\mingw730_32\bin\mingw32-make.exe
 Set-Alias -Name qmake -Value C:\Qt\Qt5.12.11\5.12.11\mingw73_32\bin\qmake.exe
 
+# handy things to run
+Set-Alias -Name paint -Value C:\Windows\System32\mspaint.exe
+Set-Alias -Name gimp -Value "C:\Users\Steve Mink\AppData\Local\Programs\GIMP 2\bin\gimp-2.10.exe"
+Set-Alias -Name microir -Value "C:\Program Files (x86)\BAE Systems\MicroIR GUI\MicroIR_GUI.exe"
+Set-Alias -Name vlc -Value "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"
+# "control" automatically runs control panel
+Set-Alias -Name chrome -Value "C:\Program Files\Google\Chrome\Application\chrome.exe"
+# "putty" is automatic
+Set-Alias -Name wireshark -Value "C:\Program Files\Wireshark\Wireshark.exe"
+Set-Alias -Name qt -Value C:\Qt\Qt5.12.11\Tools\QtCreator\bin\qtcreator.exe
+Set-Alias -Name studio -Value "C:\Program Files\Android\Android Studio\bin\studio64.exe"
+Set-Alias -Name uniflash -Value C:\ti\uniflash_6.1.0\node-webkit\nw.exe
+# TODO: vivado does not work; likely need to make it a function
+Set-Alias -Name vivado -Value "C:\Xilinx\Vivado\2020.2\bin\unwrapped\win64.o\vvgl.exe"
 
 function path([string] $operation, [string] $dir)
 {
