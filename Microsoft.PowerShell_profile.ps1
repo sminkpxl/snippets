@@ -54,6 +54,7 @@ function gd { git diff $args }
 function gsm { git ls-files -m . }
 function gcp { git cherry-pick $args }
 function gs { git status $args }
+function gsu { git status -uno $args }
 function glf { git log --name-status --oneline $args }
 function gsi { echo 'git submodule init'; git submodule init }
 function gsur { echo 'git submodule update --recursive'; git submodule update --recursive }
