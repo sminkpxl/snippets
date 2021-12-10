@@ -36,7 +36,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.9'
+$myprofversion = '1.10'
 $myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
@@ -57,7 +57,7 @@ function gs { git status $args }
 function glf { git log --name-status --oneline $args }
 function gsi { echo 'git submodule init'; git submodule init }
 function gsur { echo 'git submodule update --recursive'; git submodule update --recursive }
-function dirty { git describe --tag --long --dirty }
+function dirty { git describe --tag --long --dirty --always }
 
 # Compute file hashes - useful for checking successful downloads 
 function md5    { Get-FileHash -Algorithm MD5 $args }
@@ -188,10 +188,6 @@ function file { bash -c "file ${args}" }
 #alias runflake='flake8 --max-complexity 12 --ignore E303,W391'
 #alias whatbranch='git status . 2>&1 | sed -n -e "s/.*On branch //p"'
 #alias fhpc='git  status | grep "^#.*modified:" | sed -n -e "s/.*modified://p" | xargs grep --color -HI -e'
-#alias gsl='git stash list'
-#alias gb='git blame'
-#alias gdescr='git describe --tag --long --dirty'
-#alias gl='git log'
 
 # simplified versions
 function head { gc $args | select-object -first 10 }
@@ -249,6 +245,7 @@ Set-Alias -Name chrome -Value "C:\Program Files\Google\Chrome\Application\chrome
 # "putty" is automatic
 Set-Alias -Name wireshark -Value "C:\Program Files\Wireshark\Wireshark.exe"
 Set-Alias -Name qt -Value C:\Qt\Qt5.12.11\Tools\QtCreator\bin\qtcreator.exe
+Set-Alias -Name ide -Value C:\ST\STM32CubeIDE_1.6.1\STM32CubeIDE\stm32cubeide.exe
 Set-Alias -Name studio -Value "C:\Program Files\Android\Android Studio\bin\studio64.exe"
 Set-Alias -Name uniflash -Value C:\ti\uniflash_6.1.0\node-webkit\nw.exe
 # TODO: vivado does not work; likely need to make it a function
@@ -280,6 +277,8 @@ function path([string] $operation, [string] $dir)
 
 function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -noExit "Get-Location | select-object -Expandproperty Path" }
 function fortune { bash -c "fortune" }
+#function cmds { grep Set-Alias $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_.Replace("-Value ","") } } 
+function cmds { grep "^Set-Alias" $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_ -replace " (.*)","" } | sort } 
 
 # function needs: single required argument to construct a command like the following: tasklist.exe /m /fi "imagename eq vfsze.exe"
 # above could also be aliased to depends
