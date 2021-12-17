@@ -36,7 +36,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.10'
+$myprofversion = '1.11'
 $myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
@@ -251,7 +251,9 @@ Set-Alias -Name studio -Value "C:\Program Files\Android\Android Studio\bin\studi
 Set-Alias -Name uniflash -Value C:\ti\uniflash_6.1.0\node-webkit\nw.exe
 # TODO: vivado does not work; likely need to make it a function
 Set-Alias -Name vivado -Value "C:\Xilinx\Vivado\2020.2\bin\unwrapped\win64.o\vvgl.exe"
+Set-Alias -Name mx -Value "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeMX\STM32CubeMX.exe"
 
+# note: for pipenv, do this: path + 'C:\Users\Steve Mink\AppData\Local\Programs\Python\Python39\Scripts'
 function path([string] $operation, [string] $dir)
 {
     # check if empty
@@ -276,6 +278,18 @@ function path([string] $operation, [string] $dir)
     }
 }
 
+function reposrc
+{
+    if (Test-Path .git\config)
+    {
+        grep url .git\config | ForEach-object { $_ -replace "(.*)= git","git" }
+    }
+    else
+    {
+        echo "Not a valid git repository"
+    }
+}
+
 function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -noExit "Get-Location | select-object -Expandproperty Path" }
 function fortune { bash -c "fortune" }
 #function cmds { grep Set-Alias $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_.Replace("-Value ","") } } 
@@ -283,6 +297,8 @@ function cmds { grep "^Set-Alias" $profile | ForEach-object { $_.SubString(16) }
 
 # function needs: single required argument to construct a command like the following: tasklist.exe /m /fi "imagename eq vfsze.exe"
 # above could also be aliased to depends
+
+# something with this: runcmd "powercfg/energy" - monitors battery health for 60s - must be run as admin
 
 # if you get an execution error, run this from an admin powershell:
 #     Set-ExecutionPolicy -ExecutionPolicy Unrestricted
