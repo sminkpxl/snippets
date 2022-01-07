@@ -36,7 +36,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.11'
+$myprofversion = '1.12'
 $myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
@@ -100,10 +100,10 @@ function wc { bash -c "wc $args" }
 function version { echo $myprofversion; get-wmiobject -class win32_operatingsystem | select caption } 
 function psversion { echo(Get-Host).Version } 
 function calc { bash -c "echo $args" }
-function fh { bash -c "find * -type f | xargs grep -HI $args" }
-function fhi { bash -c "find * -type f | xargs grep -HIi $args" }
-function fhl { bash -c "find * -type f | xargs grep -HIl $args" }
-function fhil { bash -c "find * -type f | xargs grep -HIil $args" }
+function fh { bash -c "find * -type f | xargs -d '\n' grep -HI $args" }
+function fhi { bash -c "find * -type f | xargs -d '\n' grep -HIi $args" }
+function fhl { bash -c "find * -type f | xargs -d '\n' grep -HIl $args" }
+function fhil { bash -c "find * -type f | xargs -d '\n' grep -HIil $args" }
 function findf
 {
     if ($args.Count -gt 0)
@@ -281,13 +281,13 @@ function path([string] $operation, [string] $dir)
 function reposrc
 {
     if (Test-Path .git\config)
-    {
-        grep url .git\config | ForEach-object { $_ -replace "(.*)= git","git" }
-    }
-    else
-    {
-        echo "Not a valid git repository"
-    }
+	{
+		grep url .git\config | ForEach-object { $_ -replace "(.*)= git","git" }
+	}
+	else
+	{
+		echo "Not a valid git repository"
+	}
 }
 
 function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -noExit "Get-Location | select-object -Expandproperty Path" }
