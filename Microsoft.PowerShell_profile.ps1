@@ -36,7 +36,7 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.12'
+$myprofversion = '1.13'
 $myCurrentDirectory = "c:\Users\Steve Mink"
 
 # update system vars
@@ -53,10 +53,12 @@ function gs { git status $args }
 function gd { git diff $args }
 function gsm { git ls-files -m . }
 function gcp { git cherry-pick $args }
+function gco { git checkout $args }
 function gs { git status $args }
 function gsu { git status -uno $args }
 function glf { git log --name-status --oneline $args }
 function gsi { echo 'git submodule init'; git submodule init }
+function gup { echo 'git fetch --all'; git fetch --all; echo 'git pull'; git pull }
 function gsur { echo 'git submodule update --recursive'; git submodule update --recursive }
 function dirty { git describe --tag --long --dirty --always }
 
@@ -252,6 +254,7 @@ Set-Alias -Name uniflash -Value C:\ti\uniflash_6.1.0\node-webkit\nw.exe
 # TODO: vivado does not work; likely need to make it a function
 Set-Alias -Name vivado -Value "C:\Xilinx\Vivado\2020.2\bin\unwrapped\win64.o\vvgl.exe"
 Set-Alias -Name mx -Value "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeMX\STM32CubeMX.exe"
+Set-Alias -Name fox -Value "C:\Program Files\Mozilla Firefox\firefox.exe"
 
 # note: for pipenv, do this: path + 'C:\Users\Steve Mink\AppData\Local\Programs\Python\Python39\Scripts'
 function path([string] $operation, [string] $dir)
