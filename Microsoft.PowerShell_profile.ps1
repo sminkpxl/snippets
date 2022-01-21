@@ -36,8 +36,8 @@ remove-item -path alias:ls
 remove-item -path alias:pwd
 
 # create some vars
-$myprofversion = '1.13'
-$myCurrentDirectory = "c:\Users\Steve Mink"
+$myprofversion = '1.14'
+$myCurrentDirectory = $HOME
 
 # update system vars
 $MaximumHistoryCount = 1000
@@ -61,6 +61,8 @@ function gsi { echo 'git submodule init'; git submodule init }
 function gup { echo 'git fetch --all'; git fetch --all; echo 'git pull'; git pull }
 function gsur { echo 'git submodule update --recursive'; git submodule update --recursive }
 function dirty { git describe --tag --long --dirty --always }
+function app { git commit -m "update submodule application" application }
+function lib { git commit -m "update submodule library" library }
 
 # Compute file hashes - useful for checking successful downloads 
 function md5    { Get-FileHash -Algorithm MD5 $args }
