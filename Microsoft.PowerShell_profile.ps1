@@ -31,12 +31,13 @@
 # this to: Get-Alias a* will show all aliases starting with an 'a'
 # kill is already aliased to stop-process
 
-# remove "bad" aliases
+# remove "bad" aliases - only force it when needed
 remove-item -path alias:ls
 remove-item -path alias:pwd
+remove-item -path alias:gl -Force
 
 # create some vars
-$myprofversion = '1.14'
+$myprofversion = '1.15'
 $myCurrentDirectory = $HOME
 
 # update system vars
@@ -63,6 +64,9 @@ function gsur { echo 'git submodule update --recursive'; git submodule update --
 function dirty { git describe --tag --long --dirty --always }
 function app { git commit -m "update submodule application" application }
 function lib { git commit -m "update submodule library" library }
+function gl { git config --list }
+function gss { git submodule status }
+function modck { git log -1; git log -1 origin/main } # nice to be able to overide what the remote looks like e.g. if a param is provided, use it otherwise use origin/main
 
 # Compute file hashes - useful for checking successful downloads 
 function md5    { Get-FileHash -Algorithm MD5 $args }
