@@ -37,7 +37,7 @@ remove-item -path alias:pwd
 remove-item -path alias:gl -Force
 
 # create some vars
-$myprofversion = '1.15'
+$myprofversion = '1.16'
 $myCurrentDirectory = $HOME
 
 # update system vars
@@ -64,6 +64,7 @@ function gsur { echo 'git submodule update --recursive'; git submodule update --
 function dirty { git describe --tag --long --dirty --always }
 function app { git commit -m "update submodule application" application }
 function lib { git commit -m "update submodule library" library }
+function swi { git commit -m "update submodule swi" swi }
 function gl { git config --list }
 function gss { git submodule status }
 function modck { git log -1; git log -1 origin/main } # nice to be able to overide what the remote looks like e.g. if a param is provided, use it otherwise use origin/main
@@ -90,6 +91,7 @@ function admin
 }
 Set-Alias -Name su -Value admin
 Set-Alias -Name sudo -Value admin
+Set-Alias -Name g -Value findstr # think of a better way of doing this
 
 # functions
 function runcmd { cmd /c $args }
@@ -102,12 +104,14 @@ Set-Alias -Name vc -Value vcal
 #function vi { gvim.exe $args }
 #function gvim { gvim.exe $args }
 function gvimdiff { gvim.exe -d $args } 
+function . { echo 'I really want to get IP/GPS information here' } # this does not work
 function .. { cd .. }
 function ls { $a = $args -replace '\\','/'; bash -c "ls $a" } #function ls { bash -c "ls $args" }
 function wc { bash -c "wc $args" }
 function version { echo $myprofversion; get-wmiobject -class win32_operatingsystem | select caption } 
 function psversion { echo(Get-Host).Version } 
 function calc { bash -c "echo $args" }
+# all of these need to support a position dependent argument '-d' to force omitting things that contain 'Debug/'
 function fh { bash -c "find * -type f | xargs -d '\n' grep -HI $args" }
 function fhi { bash -c "find * -type f | xargs -d '\n' grep -HIi $args" }
 function fhl { bash -c "find * -type f | xargs -d '\n' grep -HIl $args" }
@@ -162,6 +166,7 @@ function finddi
 Set-Alias -Name fdi -Value finddi
 function dfhl { Get-WMIObject Win32_LogicalDisk -filter "DriveType=3" | ft }
 function pwd { (Get-Location | select-string -notmatch '----') -replace "`n",'' }
+Set-Alias -Name pdw -Value pwd # I don't know why, but I do this way too often
 function info { get-childitem Env: | ft }  # TODO: filter things out of this
 function gtd { gvim.exe 'G:\My Drive\notes\*cal*' 'G:\My Drive\notes\*gtd*' } 
 function prompt { "$ "; $host.ui.RawUI.WindowTitle = $(get-location) }
