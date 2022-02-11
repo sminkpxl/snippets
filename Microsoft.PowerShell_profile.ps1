@@ -37,7 +37,7 @@ remove-item -path alias:pwd
 remove-item -path alias:gl -Force
 
 # create some vars
-$myprofversion = '1.16'
+$myprofversion = '1.17'
 $myCurrentDirectory = $HOME
 
 # update system vars
@@ -68,6 +68,7 @@ function swi { git commit -m "update submodule swi" swi }
 function gl { git config --list }
 function gss { git submodule status }
 function modck { git log -1; git log -1 origin/main } # nice to be able to overide what the remote looks like e.g. if a param is provided, use it otherwise use origin/main
+function gbr { git branch --show-current }
 
 # Compute file hashes - useful for checking successful downloads 
 function md5    { Get-FileHash -Algorithm MD5 $args }
@@ -253,6 +254,7 @@ Set-Alias -Name qmake -Value C:\Qt\Qt5.12.11\5.12.11\mingw73_32\bin\qmake.exe
 Set-Alias -Name paint -Value C:\Windows\System32\mspaint.exe
 Set-Alias -Name gimp -Value "C:\Users\Steve Mink\AppData\Local\Programs\GIMP 2\bin\gimp-2.10.exe"
 Set-Alias -Name microir -Value "C:\Program Files (x86)\BAE Systems\MicroIR GUI\MicroIR_GUI.exe"
+Set-Alias -Name overlay -Value "C:\Program Files (x86)\BAE Systems\MicroIR GUI\OverlayEditor.exe"
 Set-Alias -Name vlc -Value "C:\Program Files (x86)\VideoLAN\VLC\vlc.exe"
 # "control" automatically runs control panel
 Set-Alias -Name chrome -Value "C:\Program Files\Google\Chrome\Application\chrome.exe"
