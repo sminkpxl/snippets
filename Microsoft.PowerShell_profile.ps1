@@ -37,7 +37,7 @@ remove-item -path alias:pwd
 remove-item -path alias:gl -Force
 
 # create some vars
-$myprofversion = '1.17'
+$myprofversion = '1.19'
 $myCurrentDirectory = $HOME
 
 # update system vars
@@ -69,6 +69,7 @@ function gl { git config --list }
 function gss { git submodule status }
 function modck { git log -1; git log -1 origin/main } # nice to be able to overide what the remote looks like e.g. if a param is provided, use it otherwise use origin/main
 function gbr { git branch --show-current }
+function lc { python.exe C:\_me\scripts\list-commits.py $args }
 
 # Compute file hashes - useful for checking successful downloads 
 function md5    { Get-FileHash -Algorithm MD5 $args }
@@ -167,6 +168,7 @@ function finddi
 Set-Alias -Name fdi -Value finddi
 function dfhl { Get-WMIObject Win32_LogicalDisk -filter "DriveType=3" | ft }
 function pwd { (Get-Location | select-string -notmatch '----') -replace "`n",'' }
+function datetime { (date | select-string ':') -replace "`n",'' }
 Set-Alias -Name pdw -Value pwd # I don't know why, but I do this way too often
 function info { get-childitem Env: | ft }  # TODO: filter things out of this
 function gtd { gvim.exe 'G:\My Drive\notes\*cal*' 'G:\My Drive\notes\*gtd*' } 
@@ -268,6 +270,10 @@ Set-Alias -Name uniflash -Value C:\ti\uniflash_6.1.0\node-webkit\nw.exe
 Set-Alias -Name vivado -Value "C:\Xilinx\Vivado\2020.2\bin\unwrapped\win64.o\vvgl.exe"
 Set-Alias -Name mx -Value "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeMX\STM32CubeMX.exe"
 Set-Alias -Name fox -Value "C:\Program Files\Mozilla Firefox\firefox.exe"
+Set-Alias -Name decomp -Value "C:\_me\3p\java-decompiler\jd-gui-windows-1.6.6\jd-gui.exe"
+
+Set-Alias -Name d -Value datetime
+Set-Alias -Name t -Value datetime
 
 # note: for pipenv, do this: path + 'C:\Users\Steve Mink\AppData\Local\Programs\Python\Python39\Scripts'
 function path([string] $operation, [string] $dir)
@@ -310,6 +316,7 @@ function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -no
 function fortune { bash -c "fortune" }
 #function cmds { grep Set-Alias $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_.Replace("-Value ","") } } 
 function cmds { grep "^Set-Alias" $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_ -replace " (.*)","" } | sort } 
+function ports { Get-ItemProperty -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM | g Device | sort } 
 
 # function needs: single required argument to construct a command like the following: tasklist.exe /m /fi "imagename eq vfsze.exe"
 # above could also be aliased to depends
