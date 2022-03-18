@@ -37,17 +37,16 @@ remove-item -path alias:pwd
 remove-item -path alias:gl -Force
 
 # create some vars
-$myprofversion = '1.19'
+$myprofversion = '1.20'
 $myCurrentDirectory = $HOME
+$env:myXargs = $true
 
 # update system vars
 $MaximumHistoryCount = 1000
 
 # Get rid of the ps7 promotion - open powershell with -nologo for cleanest experience
 Clear-Host
-#Write-Host "Windows PowerShell" # this is stupid - pick something cooler
 bash -c "fortune"
-#Write-Host
 
 # git related
 function gs { git status $args }
@@ -75,6 +74,9 @@ function lc { python.exe C:\_me\scripts\list-commits.py $args }
 function md5    { Get-FileHash -Algorithm MD5 $args }
 function sha1   { Get-FileHash -Algorithm SHA1 $args }
 function sha256 { Get-FileHash -Algorithm SHA256 $args }
+function xon { $env:myXargs = $true }  # TODO: figure out why these aren't working
+function xoff { $env:myXargs = $false }
+function env { dir env: }
 
 # Simple function to start a new elevated process. If arguments are supplied then 
 # a single command is started with admin rights; if not then a new admin instance
@@ -110,14 +112,38 @@ function . { echo 'I really want to get IP/GPS information here' } # this does n
 function .. { cd .. }
 function ls { $a = $args -replace '\\','/'; bash -c "ls $a" } #function ls { bash -c "ls $args" }
 function wc { bash -c "wc $args" }
+function wcl { $input | Measure-Object -line | select-object -ExpandProperty Lines }
 function version { echo $myprofversion; get-wmiobject -class win32_operatingsystem | select caption } 
 function psversion { echo(Get-Host).Version } 
 function calc { bash -c "echo $args" }
 # all of these need to support a position dependent argument '-d' to force omitting things that contain 'Debug/'
 function fh { bash -c "find * -type f | xargs -d '\n' grep -HI $args" }
 function fhi { bash -c "find * -type f | xargs -d '\n' grep -HIi $args" }
-function fhl { bash -c "find * -type f | xargs -d '\n' grep -HIl $args" }
-function fhil { bash -c "find * -type f | xargs -d '\n' grep -HIil $args" }
+function fhl 
+{ 
+    # TODO: probably can do this inline instead of using a temp var
+    $myxargs = (Get-item -path env:myXargs).value
+    if ($myxargs -eq 'True')
+    {
+        bash -c "find * -type f | xargs -d '\n' grep -HIl $args | xargs" 
+    }
+    else
+    {
+        bash -c "find * -type f | xargs -d '\n' grep -HIl $args" 
+    }
+}  
+function fhil 
+{
+    $myxargs = (Get-item -path env:myXargs).value
+    if ($myxargs -eq 'True')
+    {
+        bash -c "find * -type f | xargs -d '\n' grep -HIil $args | xargs" 
+    }
+    else
+    {
+        bash -c "find * -type f | xargs -d '\n' grep -HIil $args" 
+    }
+}
 function findf
 {
     if ($args.Count -gt 0)
@@ -132,25 +158,35 @@ function findf
 Set-Alias -Name ff -Value findf
 function findfi
 {
-    if ($args.Count -gt 0)
+    $myxargs = (Get-item -path env:myXargs).value
+    if ($args.Count -eq 0)
     {
-        bash -c "find * -type f | grep -i $args"
+        bash -c "find * -type f"
+    }
+    elseif ($myxargs -eq 'True')
+    {
+        bash -c "find * -type f | grep -i $args | xargs"
     }
     else
     {
-        bash -c "find * -type f"
+        bash -c "find * -type f | grep -i $args"
     }
 }
 Set-Alias -Name ffi -Value findfi
 function findd
 {
-    if ($args.Count -gt 0)
+    $myxargs = (Get-item -path env:myXargs).value
+    if ($args.Count -eq 0)
     {
-        bash -c "find * -type d | grep $args"
+        bash -c "find * -type d"
+    }
+    elseif ($myxargs -eq 'True')
+    {
+        bash -c "find * -type d | grep $args | xargs"
     }
     else
     {
-        bash -c "find * -type d"
+        bash -c "find * -type d | grep $args"
     }
 }
 Set-Alias -Name fd -Value findd
@@ -211,6 +247,7 @@ function head { gc $args | select-object -first 10 }
 function tail { gc $args | select-object -last 10 }
 function grep { select-string -Path $args[1] -Pattern $args[0] -AllMatches | select-object -ExpandProperty Line }
 function grepv { select-string -notmatch -Path $args[1] -Pattern $args[0] -AllMatches | select-object -ExpandProperty Line }
+function which { if ($args.Count -lt 1) { echo 'what are you looking for?'; return } Get-Command $args[0] | Select-Object Source | g $args[0] }
 
 # location based things
 function xd
@@ -303,20 +340,49 @@ function path([string] $operation, [string] $dir)
 function reposrc
 {
     if (Test-Path .git\config)
-	{
-		grep url .git\config | ForEach-object { $_ -replace "(.*)= git","git" }
-	}
-	else
-	{
-		echo "Not a valid git repository"
-	}
+    {
+        grep url .git\config | ForEach-object { $_ -replace "(.*)= git","git" }
+    }
+    else
+    {
+        echo "Not a valid git repository"
+    }
 }
 
 function newtab { wt --window 0 -p "Windows Powershell" -d "$pwd" powershell -noExit "Get-Location | select-object -Expandproperty Path" }
 function fortune { bash -c "fortune" }
 #function cmds { grep Set-Alias $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_.Replace("-Value ","") } } 
 function cmds { grep "^Set-Alias" $profile | ForEach-object { $_.SubString(16) } | ForEach-object { $_ -replace " (.*)","" } | sort } 
-function ports { Get-ItemProperty -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM | g Device | sort } 
+function ports { Get-ItemProperty -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM | findstr Device | sort } 
+
+# ref: https://www.reddit.com/r/bashonubuntuonwindows/comments/t5d6l0/get_list_of_all_wsl_distributions_their_locations/?utm_medium=android_app&utm_source=share
+function sizes
+{
+    Get-ChildItem "HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss" -Recurse |
+    ForEach-Object {
+    $distro_name = ($_ | Get-ItemProperty -Name DistributionName).DistributionName
+    $distro_dir =  ($_ | Get-ItemProperty -Name BasePath).BasePath
+
+    $distro_dir = Switch ($PSVersionTable.PSEdition) {
+    "Core" { $distro_dir -replace '^\\\\\?\\','' }
+    "Desktop" {
+            if ($distro_dir.StartsWith('\\?\')) 
+            {
+                $distro_dir
+            } 
+            else 
+            {
+                '\\?\' + $distro_dir
+            }
+        }
+    }
+    Write-Output "------------------------------"
+    Write-Output "Distribution: $distro_name"
+    Write-Output "Directory: $($distro_dir -replace '\\\\\?\\','')"
+    $distro_size = "{0:N0} MB" -f ((Get-ChildItem -Recurse -LiteralPath "$distro_dir" | Measure-Object -Property Length -sum).sum / 1Mb)
+    Write-Output "Size: $distro_size"
+    }
+}
 
 # function needs: single required argument to construct a command like the following: tasklist.exe /m /fi "imagename eq vfsze.exe"
 # above could also be aliased to depends
